@@ -1,10 +1,9 @@
-from Processing import identifikasiKolomByTabel, identifikasiTabel, isPerintah
-from Preprocessing import pre
-from QueryForming import queryForming
-from WordList import getDaftarPerintah, getDaftarStopWord
+from Controller.Processing import identifikasiKolomByTabel, identifikasiTabel, isPerintah
+from Controller.Preprocessing import pre
+from Controller.QueryForming import queryForming
 
 kalimatPerintah = pre(
-    "pak bapak ibu tampilkan nama mahasiswa")
+    "tampilkan nama mahasiswa yang memiliki nama adi kurniawan")
 print(f'''
     'kalimat': {kalimatPerintah},
     'isPerintah': {isPerintah(kalimatPerintah)},

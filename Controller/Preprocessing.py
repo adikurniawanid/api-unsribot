@@ -1,7 +1,12 @@
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
-from re import sub
-from WordList import getDaftarStopWord, getDaftarKolom, getDaftarTable, getDaftarSimbol, getDaftarPenangananNamaTabel, getDaftarSinonim
-import re
+from Controller.WordList import getDaftarStopWord, getDaftarKolom, getDaftarTable, getDaftarSimbol, getDaftarPenangananNamaTabel, getDaftarPenangananNamaKolom, getDaftarSinonim
+
+
+def penangananNamaKolom(text):
+    daftarPenangananNamaKolom = getDaftarPenangananNamaKolom()
+    for i, j in daftarPenangananNamaKolom.items():
+        text = text.replace(i, j)
+    return text
 
 
 def penangananNamaTabel(text):
@@ -58,7 +63,15 @@ def stemming(token):
 
 
 def pre(kalimatPerintah):
-    result = stopwordFiltering(stemming(hapusSimbol(tokenizing(
-        doubleToSingleTick(simbolToKarakter(penangananNamaTabel(sinonim(kalimatPerintah.lower()))))))))
+    result = stopwordFiltering(
+        stemming(
+            hapusSimbol(
+                tokenizing(
+                    doubleToSingleTick(
+                        simbolToKarakter(
+                            penangananNamaTabel(
+                                penangananNamaKolom(
+                                    sinonim(
+                                        kalimatPerintah.lower())))))))))
 
     return result

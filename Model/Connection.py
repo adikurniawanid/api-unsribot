@@ -1,5 +1,5 @@
 import mysql.connector
-from Settings import DATABASE_NAME, DATABASE_PASSWORD, DATABASE_USER, DATABASE_HOST
+from Config.Settings import DATABASE_NAME, DATABASE_PASSWORD, DATABASE_USER, DATABASE_HOST
 
 try:
     connection = mysql.connector.connect(

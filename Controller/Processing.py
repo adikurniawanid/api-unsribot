@@ -1,5 +1,4 @@
-from unittest import result
-from WordList import getDaftarKolomByTabel, getDaftarTable, getDaftarPerintah, getDaftarKolom, getDaftarKondisi
+from Controller.WordList import getDaftarKolomByTabel, getDaftarTable, getDaftarPerintah, getDaftarKolom, getDaftarKondisi
 
 
 def isPerintah(token):
@@ -25,16 +24,13 @@ def identifikasiTabel(token):
     return result
 
 
-def identifikasiKolom(token):
-    daftarKolom = getDaftarKolom()
-
-    result = []
-
-    for w in token:
-        if w in daftarKolom:
-            result.append(w)
-
-    return result
+# def identifikasiKolom(token):
+#     daftarKolom = getDaftarKolom()
+#     result = []
+#     for w in token:
+#         if w in daftarKolom:
+#             result.append(w)
+#     return result
 
 
 def identifikasiKolomByTabel(token):
@@ -56,20 +52,13 @@ def identifikasiKolomByTabel(token):
 def identifikasiKondisi(token):
     daftarKondisi = getDaftarKondisi()
 
-    teridentifikasi = []
-    indeksTeridentifikasi = []
     banyakKondisi = 0
 
-    indeks = 0
     for w in token:
         if w in daftarKondisi:
-            teridentifikasi.append(w)
-            indeksTeridentifikasi.append(indeks)
             banyakKondisi += 1
-            indeks += 1
-        else:
-            indeks += 1
-    return teridentifikasi, indeksTeridentifikasi, banyakKondisi
+
+    return banyakKondisi
 
 
 def identifikasiOperatorLogika(token):

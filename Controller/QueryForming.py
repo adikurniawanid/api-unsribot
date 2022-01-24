@@ -1,5 +1,5 @@
-from Processing import identifikasiKolomByTabel, isPerintah, identifikasiTabel, identifikasiKondisi
-from WordList import getDaftarKolomByTabel, getDaftarTable
+from Controller.Processing import identifikasiKolomByTabel, isPerintah, identifikasiTabel, identifikasiKondisi
+from Controller.WordList import getDaftarKolomByTabel, getDaftarTable
 
 
 def listToString(list):
@@ -59,6 +59,12 @@ def queryForming(token):
                 sqlPart.insert(indeksSQL, f"{w} ")
                 indeksKoma += 1
             indeksSQL += 1
+
+# ? queryPart Kondisi
+    banyakKondisi = identifikasiKondisi(token)
+    if banyakKondisi > 0:
+        sqlPart.insert(indeksSQL, f"WHERE ")
+        indeksSQL += 1
 
 # ? result query
     result = listToString(sqlPart)

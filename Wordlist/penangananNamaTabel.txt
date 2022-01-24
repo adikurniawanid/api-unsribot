@@ -1,0 +1,4 @@
+kode mata kuliah:kode_mata_kuliah
+kode matakuliah:kode_mata_kuliah
+mata kuliah:mata_kuliah
+matakuliah:mata_kuliah
