@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import reqparse, Api, Resource
 from Controller.Preprocessing import pre
-from Controller.Processing import identifikasiKolomByTabel, isPerintah, identifikasiTabel, identifikasiKondisi
+from Controller.Processing import identifikasiKolomByTabel, identifikasiKolomKondisi, isPerintah, identifikasiTabel, identifikasiKondisi, identifikasiOperatorLogika
 from Controller.QueryForming import queryForming
 
 app = Flask(__name__)
@@ -23,7 +23,8 @@ class NaturalLanguage(Resource):
             'identifikasiTabel': identifikasiTabel(kalimatPerintah),
             'identifikasiKolomByTabel': identifikasiKolomByTabel(kalimatPerintah),
             'identifikasiKondisi': identifikasiKondisi(kalimatPerintah),
-            # 'identifikasiOperator': identifikasiOperatorLogika(kalimatPerintah),
+            'identifikasiOperator': identifikasiOperatorLogika(kalimatPerintah),
+            'identifikasiKolomKondisi': identifikasiKolomKondisi(kalimatPerintah),
             'query': queryForming(kalimatPerintah)
         }
         # query = {'query': queryForming(kalimatPerintah)}

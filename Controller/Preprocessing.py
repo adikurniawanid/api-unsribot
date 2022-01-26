@@ -54,11 +54,17 @@ def stemming(token):
         if(w.find("'") != False):
             if(w not in getDaftarKolom() and w not in getDaftarTable()):
                 if(stemmer.stem(w) != ""):
-                    tokenStem.append(stemmer.stem(w))
+                    tokenStem.append(
+                        penangananNamaKolom(
+                            penangananNamaTabel(stemmer.stem(w))))
             else:
-                tokenStem.append(w)
+                tokenStem.append(
+                    penangananNamaKolom(
+                        penangananNamaTabel(w)))
         else:
-            tokenStem.append(w)
+            tokenStem.append(
+                penangananNamaKolom(
+                    penangananNamaTabel(w)))
     return tokenStem
 
 

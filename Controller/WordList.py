@@ -1,7 +1,7 @@
 from Model.Schema import getDaftarTabel, getDaftarKolom, getDaftarRelasi, querySQL
 from numpy import hstack
 
-from Config.Settings import DATABASE_NAME, WORDLIST_PERINTAH, WORDLIST_STOPWORD, WORDLIST_KONDISI, WORDLIST_SIMBOL, WORDLIST_SINONIM, WORDLIST_PENANGANAN_NAMA_TABEL, WORDLIST_PENANGANAN_NAMA_KOLOM
+from Config.Settings import DATABASE_NAME, WORDLIST_PERINTAH, WORDLIST_STOPWORD, WORDLIST_KONDISI, WORDLIST_SIMBOL, WORDLIST_SINONIM, WORDLIST_PENANGANAN_NAMA_TABEL, WORDLIST_PENANGANAN_NAMA_KOLOM, WORDLIST_OPERATOR_LOGIKA
 
 
 class wordList:
@@ -19,6 +19,7 @@ class wordList:
     _daftarKondisi = readTxtToSet(WORDLIST_KONDISI)
     _daftarStopword = readTxtToSet(WORDLIST_STOPWORD)
     _daftarSimbol = readTxtToSet(WORDLIST_SIMBOL)
+    _daftarOperatorLogika = readTxtToSet(WORDLIST_OPERATOR_LOGIKA)
     _daftarPenangananNamaTabel = readTxtToDict(WORDLIST_PENANGANAN_NAMA_TABEL)
     _daftarPenangananNamaKolom = readTxtToDict(WORDLIST_PENANGANAN_NAMA_KOLOM)
     _daftarSinonim = readTxtToDict(WORDLIST_SINONIM)
@@ -46,6 +47,10 @@ def getDaftarStopWord():
 
 def getDaftarSimbol():
     return wordList._daftarSimbol
+
+
+def getDaftarOperatorLogika():
+    return wordList._daftarOperatorLogika
 
 
 def getDaftarRelasi():
