@@ -7,16 +7,17 @@ from Controller.QueryForming import queryForming
 app = Flask(__name__)
 api = Api(app)
 
-kalimatPerintah = ''
-
 parser = reqparse.RequestParser()
-parser.add_argument('NL')
+parser.add_argument('nlParam')
 
 
 class NaturalLanguage(Resource):
+    def get(self):
+        return {'message': 'api-unsribot'}
+
     def post(self):
         kalimatPerintah = parser.parse_args()
-        kalimatPerintah = pre(kalimatPerintah['NL'])
+        kalimatPerintah = pre(kalimatPerintah['nlParam'])
         result = {
             'kalimat': kalimatPerintah,
             'isPerintah': isPerintah(kalimatPerintah),
@@ -27,12 +28,10 @@ class NaturalLanguage(Resource):
             'identifikasiKolomKondisi': identifikasiKolomKondisi(kalimatPerintah),
             'query': queryForming(kalimatPerintah)
         }
-        # query = {'query': queryForming(kalimatPerintah)}
-
         return result, 201
 
 
-api.add_resource(NaturalLanguage, '/nl')
+api.add_resource(NaturalLanguage, '/')
 
 if __name__ == '__main__':
     app.run(debug=True)
