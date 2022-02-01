@@ -1,83 +1,79 @@
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
-from Controller.WordList import getDaftarStopWord, getDaftarKolom, getDaftarTable, getDaftarSimbol, getDaftarPenangananNamaTabel, getDaftarPenangananNamaKolom, getDaftarSinonim
+from Controller.WordList import WordList
 
 
-def penangananNamaKolom(text):
-    daftarPenangananNamaKolom = getDaftarPenangananNamaKolom()
-    for i, j in daftarPenangananNamaKolom.items():
-        text = text.replace(i, j)
-    return text
+class Preprocessing:
+    def __init__(self):
+        wordlist = WordList()
+        self.__daftarPenangananNamaKolom = wordlist.getDaftarPenangananNamaKolom()
+        self.__daftarSinonim = wordlist.getDaftarSinonim()
+        self.__daftarPenangananNamaTabel = wordlist.getDaftarPenangananNamaTabel()
+        self.__daftarSimbol = wordlist.getDaftarSimbol()
+        self.__daftarKolom = wordlist.getDaftarKolom()
+        self.__daftarTable = wordlist.getDaftarTable()
+        self.__daftarStopWord = wordlist.getDaftarStopWord()
 
+    def sinonim(self, text):
+        for i, j in self.__daftarSinonim.items():
+            text = text.replace(i, j)
+        return text
 
-def penangananNamaTabel(text):
-    daftarPenangananNamaTabel = getDaftarPenangananNamaTabel()
-    for i, j in daftarPenangananNamaTabel.items():
-        text = text.replace(i, j)
-    return text
+    def penangananNamaKolom(self, text):
+        for i, j in self.__daftarPenangananNamaKolom.items():
+            text = text.replace(i, j)
+        return text
 
+    def penangananNamaTabel(self, text):
+        for i, j in self.__daftarPenangananNamaTabel.items():
+            text = text.replace(i, j)
+        return text
 
-def sinonim(text):
-    daftarSinonim = getDaftarSinonim()
-    for i, j in daftarSinonim.items():
-        text = text.replace(i, j)
-    return text
+    def simbolToKarakter(self, text):
+        return text.replace("&", "dan").replace("/", "atau")
 
+    def doubleToSingleTick(self, text):
+        return text.replace("\"", "'")
 
-def simbolToKarakter(simbol):
-    return simbol.replace("&", "dan").replace("/", "atau")
+    def tokenizing(self, kalimat):
+        kalimat = self.doubleToSingleTick(self.simbolToKarakter(kalimat))
+        return kalimat.split()
 
+    def hapusSimbol(self, token):
+        return [w for w in token if w not in self.__daftarSimbol]
 
-def doubleToSingleTick(kata):
-    return kata.replace("\"", "'")
-
-
-def tokenizing(kalimat):
-    kalimat = doubleToSingleTick(simbolToKarakter(kalimat))
-    return kalimat.split()
-
-
-def hapusSimbol(token):
-    specialCharacter = getDaftarSimbol()
-    return [w for w in token if w not in specialCharacter]
-
-
-def stopwordFiltering(token):
-    return [w for w in token if w not in getDaftarStopWord()]
-
-
-def stemming(token):
-    factory = StemmerFactory()
-    stemmer = factory.create_stemmer()
-
-    tokenStem = []
-    for w in token:
-        if(w.find("'") != False):
-            if(w not in getDaftarKolom() and w not in getDaftarTable()):
-                if(stemmer.stem(w) != ""):
+    def stemming(self, token):
+        factory = StemmerFactory()
+        stemmer = factory.create_stemmer()
+        tokenStem = []
+        for t in token:
+            if(t.find("'") != False):
+                if(t not in self.__daftarKolom and t not in self.__daftarTable):
+                    if(stemmer.stem(t) != ""):
+                        tokenStem.append(
+                            self.penangananNamaKolom(
+                                self.penangananNamaTabel(stemmer.stem(t))))
+                else:
                     tokenStem.append(
-                        penangananNamaKolom(
-                            penangananNamaTabel(stemmer.stem(w))))
+                        self.penangananNamaKolom(
+                            self.penangananNamaTabel(t)))
             else:
                 tokenStem.append(
-                    penangananNamaKolom(
-                        penangananNamaTabel(w)))
-        else:
-            tokenStem.append(
-                penangananNamaKolom(
-                    penangananNamaTabel(w)))
-    return tokenStem
+                    self.penangananNamaKolom(
+                        self.penangananNamaTabel(t)))
+        return tokenStem
 
+    def stopwordFiltering(self, token):
+        return [w for w in token if w not in self.__daftarStopWord]
 
-def pre(kalimatPerintah):
-    result = stopwordFiltering(
-        stemming(
-            hapusSimbol(
-                tokenizing(
-                    doubleToSingleTick(
-                        simbolToKarakter(
-                            penangananNamaTabel(
-                                penangananNamaKolom(
-                                    sinonim(
-                                        kalimatPerintah.lower())))))))))
-
-    return result
+    def pre(self, kalimat):
+        result = self.stopwordFiltering(
+            self.stemming(
+                self.hapusSimbol(
+                    self.tokenizing(
+                        self.doubleToSingleTick(
+                            self.simbolToKarakter(
+                                self.penangananNamaTabel(
+                                    self.penangananNamaKolom(
+                                        self.sinonim(
+                                            kalimat.lower())))))))))
+        return result

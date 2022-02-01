@@ -1,6 +1,116 @@
-from ast import For, operator
-from Controller.Processing import identifikasiKolomByTabel, isPerintah, identifikasiTabel, identifikasiKondisi, identifikasiKolomKondisi, identifikasiOperatorLogika
-from Controller.WordList import getDaftarKolomByTabel, getDaftarKondisi
+from Controller.Processing import Processing
+from Controller.WordList import WordList
+
+
+class QueryForming:
+    def __init__(self):
+        wordList = WordList()
+        self.__isKalimatPerintah = False
+        self.__daftarTabelTeridentifikasi = []
+        self.__daftarKolomTeridentifikasi = []
+        self.__kolomKondisiTeridentifikasi = []
+        self.__atributKondisiTeridentifikasi = []
+        self.__OperatorLogikaTeridentifikasi = []
+        self.__daftarKondisi = wordList.getDaftarKondisi()
+
+        self.__sqlPartPerintah = []
+        self.__sqlPartKolom = []
+        self.__sqlPartTabel = []
+        self.__sqlPartKondisi = []
+
+    def queryForming(self, token):
+        processing = Processing()
+        self.__isKalimatPerintah = processing.isPerintah(token)
+        self.__daftarTabelTeridentifikasi = processing.identifikasiTabel(token)
+        self.__daftarKolomTeridentifikasi = processing.identifikasiKolomByTabel(
+            token)
+        self.__kolomKondisiTeridentifikasi, self.__atributKondisiTeridentifikasi = processing.identifikasiKolomKondisi(
+            token)
+        self.__OperatorLogikaTeridentifikasi = processing.identifikasiOperatorLogika(
+            token)
+
+    # ? queryPart SELECT
+        if self.__isKalimatPerintah:
+            self.__sqlPartPerintah.insert(0, "SELECT ")
+        else:
+            return("tidak ada kalimat perintah terindentifikasi")
+
+        if len(self.__daftarTabelTeridentifikasi) == 0:
+            return("tidak ada tabel teridentifikasi")
+
+    # ?  queryPart Tabel
+        indeks = 0
+        indeksKoma = 1
+        statusKondisi = False
+
+        wordList2 = WordList()
+        for t in token:
+            for tb in self.__daftarTabelTeridentifikasi:
+                if t in self.__daftarKondisi:
+                    statusKondisi = True
+                    break
+                if statusKondisi == False:
+                    if t in wordList2.getDaftarKolomByTabel(tb) and indeksKoma < len(self.__daftarKolomTeridentifikasi):
+                        self.__sqlPartKolom.insert(indeks, f"{tb}.{t}, ")
+                        indeksKoma += 1
+                        indeks += 1
+                    elif t in wordList2.getDaftarKolomByTabel(tb) and indeksKoma == len(self.__daftarKolomTeridentifikasi):
+                        self.__sqlPartKolom.insert(indeks, f"{tb}.{t} ")
+                        indeks += 1
+
+    # ? queryPart Kolom
+        indeks = 0
+        if self.__daftarKolomTeridentifikasi[0] == '*':
+            self.__sqlPartKolom.insert(indeks, f"* ")
+            indeks += 1
+        if len(self.__daftarTabelTeridentifikasi) > 0:
+            self.__sqlPartKolom.insert(indeks, f"FROM ")
+            indeks += 1
+
+        indeksKoma = 1
+        if len(self.__daftarTabelTeridentifikasi) == 1:
+            self.__sqlPartTabel.insert(
+                indeks, f"{self.__daftarTabelTeridentifikasi[0]} ")
+            indeks += 1
+        # else:
+        #     # ! CEK LAGI UNTUK RELASI NANTI
+        #     for w in getDaftarTable():
+        #         if indeksKoma < len(daftarTabel):
+        #             sqlPart.insert(indeksSQL, f"{w}, ")
+        #             indeksKoma += 1
+        #             break
+        #         elif indeksKoma == len(daftarTabel):
+        #             sqlPart.insert(indeksSQL, f"{w} ")
+        #             indeksKoma += 1
+        #         indeksSQL += 1
+
+    # ? queryPart Kondisi
+
+        operatorLogika = []
+        for x in range(len(self.__kolomKondisiTeridentifikasi)-1):
+            operatorLogika.append(self.__OperatorLogikaTeridentifikasi.pop(0))
+
+        indeks = 0
+        if processing.identifikasiKondisi(token) is not None and len(self.__kolomKondisiTeridentifikasi) > 0 and len(operatorLogika) == len(self.__kolomKondisiTeridentifikasi)-1:
+            self.__sqlPartKondisi.insert(indeks, f"WHERE ")
+            indeks += 1
+
+        for index, k in enumerate(self.__kolomKondisiTeridentifikasi):
+            self.__sqlPartKondisi.insert(
+                indeks, f"{k} LIKE '%{self.__atributKondisiTeridentifikasi[index]}%' ")
+            indeks += 1
+            if len(operatorLogika) > 0 and index < len(operatorLogika):
+                self.__sqlPartKondisi.insert(
+                    indeks, operatorLogika[index] + ' ')
+                indeks += 1
+
+    # ? result query
+        result = listToString(self.__sqlPartPerintah) + \
+            listToString(self.__sqlPartKolom) + \
+            listToString(self.__sqlPartTabel) + \
+            listToString(self.__sqlPartKondisi)
+
+        return(result)
 
 
 def listToString(list):
@@ -8,97 +118,3 @@ def listToString(list):
     for item in list:
         result += item
     return result
-
-
-def queryForming(token):
-    _sqlPerintah = []
-    _sqlKolom = []
-    _sqlTabel = []
-    _sqlKondisi = []
-
-    isKalimatPerintah = isPerintah(token)
-    daftarTabel = identifikasiTabel(token)
-    daftarKolom = identifikasiKolomByTabel(token)
-
-# ? queryPart SELECT
-    if isKalimatPerintah:
-        _sqlPerintah.insert(0, "SELECT ")
-    else:
-        return("tidak ada kalimat perintah terindentifikasi")
-
-    if len(daftarTabel) == 0:
-        return("tidak ada tabel teridentifikasi")
-
-# ?  queryPart Tabel
-    indeks = 0
-    indeksKoma = 1
-    statusKondisi = False
-    for w in token:
-        for t in daftarTabel:
-            if w in getDaftarKondisi():
-                statusKondisi = True
-                break
-            if statusKondisi == False:
-                if w in getDaftarKolomByTabel(t) and indeksKoma < len(daftarKolom):
-                    _sqlKolom.insert(indeks, f"{t}.{w}, ")
-                    indeksKoma += 1
-                    indeks += 1
-                elif w in getDaftarKolomByTabel(t) and indeksKoma == len(daftarKolom):
-                    _sqlKolom.insert(indeks, f"{t}.{w} ")
-                    indeks += 1
-
-# ? queryPart Kolom
-    indeks = 0
-    if daftarKolom[0] == '*':
-        _sqlKolom.insert(indeks, f"* ")
-        indeks += 1
-    if len(daftarTabel) > 0:
-        _sqlTabel.insert(indeks, f"FROM ")
-        indeks += 1
-
-    indeksKoma = 1
-    if len(daftarTabel) == 1:
-        _sqlTabel.insert(indeks, f"{daftarTabel[0]} ")
-        indeks += 1
-    # else:
-    #     # ! CEK LAGI UNTUK RELASI NANTI
-    #     for w in getDaftarTable():
-    #         if indeksKoma < len(daftarTabel):
-    #             sqlPart.insert(indeksSQL, f"{w}, ")
-    #             indeksKoma += 1
-    #             break
-    #         elif indeksKoma == len(daftarTabel):
-    #             sqlPart.insert(indeksSQL, f"{w} ")
-    #             indeksKoma += 1
-    #         indeksSQL += 1
-
-# ? queryPart Kondisi
-    kolomKondisi, atributKondisi = identifikasiKolomKondisi(token)
-    tempOperatorLogika = identifikasiOperatorLogika(token)
-
-    operatorLogika = []
-    for x in range(len(kolomKondisi)-1):
-        operatorLogika.append(tempOperatorLogika.pop(0))
-
-    indeks = 0
-    if identifikasiKondisi(token) is not None and len(kolomKondisi) > 0 and len(operatorLogika) == len(kolomKondisi)-1:
-        _sqlKondisi.insert(indeks, f"WHERE ")
-        indeks += 1
-
-    for index, k in enumerate(kolomKondisi):
-        _sqlKondisi.insert(
-            indeks, f"{k} LIKE '%{atributKondisi[index]}%' ")
-        indeks += 1
-        if len(operatorLogika) > 0 and index < len(operatorLogika):
-            _sqlKondisi.insert(
-                indeks, operatorLogika[index] + ' ')
-            indeks += 1
-
-
-# ? result query
-    result = listToString(_sqlPerintah) + \
-        listToString(_sqlKolom) + \
-        listToString(_sqlTabel) + \
-        listToString(_sqlKondisi)
-
-    return(result)
