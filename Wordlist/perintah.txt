@@ -6,3 +6,5 @@ cari
 lihat
 temu
 ikan
+sebut
+minta

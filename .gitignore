@@ -130,3 +130,5 @@ dmypy.json
 
 # file
 Main.py
+*copy.py
+MainOld.py
