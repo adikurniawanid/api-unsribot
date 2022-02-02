@@ -24,13 +24,14 @@ class Processing:
         return result
 
     def identifikasiKolomByTabel(self, token):
+        self.__daftarTabelTeridentifikasi = self.identifikasiTabel(token)
         result = []
         statusKondisi = False
         for t in token:
             if t in self.__daftarKondisi:
                 statusKondisi = True
             if statusKondisi != True:
-                for tabel in self.__daftarTabel:
+                for tabel in self.__daftarTabelTeridentifikasi:
                     if t in getDaftarKolomByTabel(tabel):
                         result.append(t)
         if not result:
@@ -43,7 +44,6 @@ class Processing:
                 return t
 
     def identifikasiKolomKondisi(self, token):
-        self.__daftarTabelTeridentifikasi = self.identifikasiTabel(token)
         kolomKondisi = []
         atributKondisi = []
         statusKolomKondisi = False

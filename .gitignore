@@ -132,3 +132,5 @@ dmypy.json
 Main.py
 *copy.py
 MainOld.py
+
+*.py

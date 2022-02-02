@@ -8,16 +8,17 @@ class WordList:
         self.__daftarTabel = getDaftarTabel()
         self.__daftarKolom = getDaftarKolom()
         self.__daftarRelasi = getDaftarRelasi()
-        self.__daftarPerintah = readTxtToSet(WORDLIST_PERINTAH)
-        self.__daftarKondisi = readTxtToSet(WORDLIST_KONDISI)
-        self.__daftarStopword = readTxtToSet(WORDLIST_STOPWORD)
-        self.__daftarSimbol = readTxtToSet(WORDLIST_SIMBOL)
-        self.__daftarOperatorLogika = readTxtToSet(WORDLIST_OPERATOR_LOGIKA)
-        self.__daftarPenangananNamaTabel = readTxtToDict(
+        self.__daftarPerintah = self.readTxtToSet(WORDLIST_PERINTAH)
+        self.__daftarKondisi = self.readTxtToSet(WORDLIST_KONDISI)
+        self.__daftarStopword = self.readTxtToSet(WORDLIST_STOPWORD)
+        self.__daftarSimbol = self.readTxtToSet(WORDLIST_SIMBOL)
+        self.__daftarOperatorLogika = self.readTxtToSet(
+            WORDLIST_OPERATOR_LOGIKA)
+        self.__daftarPenangananNamaTabel = self.readTxtToDict(
             WORDLIST_PENANGANAN_NAMA_TABEL)
-        self.__daftarPenangananNamaKolom = readTxtToDict(
+        self.__daftarPenangananNamaKolom = self.readTxtToDict(
             WORDLIST_PENANGANAN_NAMA_KOLOM)
-        self.__daftarSinonim = readTxtToDict(WORDLIST_SINONIM)
+        self.__daftarSinonim = self.readTxtToDict(WORDLIST_SINONIM)
 
     def getDaftarTable(self):
         return self.__daftarTabel
@@ -52,13 +53,11 @@ class WordList:
     def getDaftarSinonim(self):
         return self.__daftarSinonim
 
+    def readTxtToSet(self, txt):
+        return set(line.strip() for line in open(txt))
 
-def readTxtToSet(txt):
-    return set(line.strip() for line in open(txt))
-
-
-def readTxtToDict(txt):
-    return dict((line.strip().split(':')[0], line.strip().split(':')[1]) for line in open(txt))
+    def readTxtToDict(self, txt):
+        return dict((line.strip().split(':')[0], line.strip().split(':')[1]) for line in open(txt))
 
 
 def getDaftarKolomByTabel(tabel):
