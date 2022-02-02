@@ -1,92 +1,79 @@
-from Controller.WordList import getDaftarKolomByTabel, getDaftarTable, getDaftarPerintah,  getDaftarKondisi
+from Controller.WordList import WordList, getDaftarKolomByTabel
 
 
-def isPerintah(token):
-    kalimatPerintah = getDaftarPerintah()
-    for w in token:
-        if w in kalimatPerintah:
-            return w
-        else:
-            return False
+class Processing:
+    def __init__(self):
+        wordlist = WordList()
+        self.__daftarPerintah = wordlist.getDaftarPerintah()
+        self.__daftarTabel = wordlist.getDaftarTable()
+        self.__daftarKondisi = wordlist.getDaftarKondisi()
+        self.__daftarTabelTeridentifikasi = []
 
+    def isPerintah(self, token):
+        for t in token:
+            if t in self.__daftarPerintah:
+                return t
+            else:
+                return False
 
-def identifikasiTabel(token):
-    daftarTabel = getDaftarTable()
+    def identifikasiTabel(self, token):
+        result = []
+        for t in token:
+            if t in self.__daftarTabel:
+                result.append(t)
+        return result
 
-    result = []
+    def identifikasiKolomByTabel(self, token):
+        self.__daftarTabelTeridentifikasi = self.identifikasiTabel(token)
+        result = []
+        statusKondisi = False
+        for t in token:
+            if t in self.__daftarKondisi:
+                statusKondisi = True
+            if statusKondisi != True:
+                for tabel in self.__daftarTabelTeridentifikasi:
+                    if t in getDaftarKolomByTabel(tabel):
+                        result.append(t)
+        if not result:
+            result.append("*")
+        return result
 
-    for w in token:
-        if w in daftarTabel:
-            result.append(w)
+    def identifikasiKondisi(self, token):
+        for t in token:
+            if t in self.__daftarKondisi:
+                return t
 
-    return result
+    def identifikasiKolomKondisi(self, token):
+        kolomKondisi = []
+        atributKondisi = []
+        statusKolomKondisi = False
 
+        for index, t in enumerate(token):
+            if t in self.__daftarKondisi:
+                statusKolomKondisi = True
+            if statusKolomKondisi == True:
+                for tabel in self.__daftarTabelTeridentifikasi:
+                    if t in getDaftarKolomByTabel(tabel):
+                        try:
+                            kolomKondisi.append(t)
+                        except:
+                            kolomKondisi.append('#None')
+                        try:
+                            atributKondisi.append(token[index+1])
+                        except:
+                            kolomKondisi.pop()
+        return kolomKondisi, atributKondisi
 
-def identifikasiKolomByTabel(token):
-    daftarTabel = identifikasiTabel(token)
-    result = []
+    def identifikasiOperatorLogika(self, token):
+        result = []
+        operatorStatus = False
 
-    daftarKondisi = getDaftarKondisi()
-    statusKondisi = False
-
-    for t in token:
-        if t in daftarKondisi:
-            statusKondisi = True
-        if statusKondisi != True:
-            for tabel in daftarTabel:
-                if t in getDaftarKolomByTabel(tabel):
-                    result.append(t)
-
-    if not result:
-        result.append("*")
-
-    return result
-
-
-def identifikasiKondisi(token):
-    daftarKondisi = getDaftarKondisi()
-
-    for w in token:
-        if w in daftarKondisi:
-            return w
-
-
-def identifikasiKolomKondisi(token):
-    daftarTabel = identifikasiTabel(token)
-    kolomKondisi = []
-    atributKondisi = []
-
-    daftarKondisi = getDaftarKondisi()
-    statusKolomKondisi = False
-
-    for index, t in enumerate(token):
-        if t in daftarKondisi:
-            statusKolomKondisi = True
-        if statusKolomKondisi == True:
-            for tabel in daftarTabel:
-                if t in getDaftarKolomByTabel(tabel):
-                    try:
-                        kolomKondisi.append(t)
-                    except:
-                        kolomKondisi.append('#None')
-                    try:
-                        atributKondisi.append(token[index+1])
-                    except:
-                        kolomKondisi.pop()
-    return kolomKondisi, atributKondisi
-
-
-def identifikasiOperatorLogika(token):
-    result = []
-    daftarKondisi = getDaftarKondisi()
-    operatorStatus = False
-
-    for w in token:
-        if w in daftarKondisi:
-            operatorStatus = True
-        if operatorStatus == True:
-            if w == "atau":
-                result.append("or")
-            elif w == "dan":
-                result.append("and")
-    return result
+        for w in token:
+            if w in self.__daftarKondisi:
+                operatorStatus = True
+            if operatorStatus == True:
+                if w == "atau":
+                    result.append("or")
+                elif w == "dan":
+                    result.append("and")
+        return result
