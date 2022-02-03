@@ -16,21 +16,22 @@ class NaturalLanguage(Resource):
         return {'message': 'api-unsribot'}
 
     def post(self):
-        preprocessing = Preprocessing()
-        processing = Parser()
-        kalimatPerintah = parser.parse_args()
-        kalimatPerintah = preprocessing.pre(kalimatPerintah['nlParam'])
-        queryForming = QueryForming(kalimatPerintah)
+        __preprocessing = Preprocessing()
+        __kalimatPerintah = parser.parse_args()
+        __token = __preprocessing.run(__kalimatPerintah['nlParam'])
+        __parser = Parser(__token)
+        __queryForming = QueryForming(__token)
 
         result = {
-            'kalimat': kalimatPerintah,
-            'isPerintah': processing.isPerintah(kalimatPerintah),
-            'identifikasiTabel': processing.identifikasiTabel(kalimatPerintah),
-            'identifikasiKolomByTabel': processing.identifikasiKolomByTabel(kalimatPerintah),
-            'identifikasiKondisi': processing.identifikasiKondisi(kalimatPerintah),
-            'identifikasiOperator': processing.identifikasiOperatorLogika(kalimatPerintah),
-            'identifikasiKolomKondisi': processing.identifikasiKolomKondisi(kalimatPerintah),
-            'query': queryForming.queryForming()
+            'kalimat': __token,
+            'isPerintah': __parser.getPerintahTeridentifikasi(),
+            'identifikasiTabel': __parser.getTabelTeridentifikasi(),
+            'identifikasiKolomByTabel': __parser.getKolomTeridentifikasiByTabel(),
+            'identifikasiKondisi': __parser.getKondisiTeridentifikasi(),
+            'identifikasiKolomKondisi': __parser.getKolomKondisiTeridentifikasi(),
+            'identifikasiAtributKondisi': __parser.getAtributKondisiTeridentifikasi(),
+            'identifikasiOperator': __parser.getOperatorLogikaTeridentifikasi(),
+            'query': __queryForming.run()
         }
         return result, 201
 

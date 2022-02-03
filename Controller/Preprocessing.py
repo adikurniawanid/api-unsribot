@@ -66,7 +66,7 @@ class Preprocessing:
     def __stopwordFiltering(self, token):
         return [w for w in token if w not in self.__daftarStopWord]
 
-    def pre(self, kalimat):
+    def run(self, kalimat):
         result = self.__stopwordFiltering(
             self.__stemming(
                 self.__hapusSimbol(

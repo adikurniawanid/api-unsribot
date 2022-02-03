@@ -4,18 +4,20 @@ from Controller.WordList import WordList, getDaftarKolomByTabel
 
 class QueryForming:
     def __init__(self, token):
-        self.__wordList = WordList()
-        self.__processing = Parser()
         self.__token = token
+        self.__wordList = WordList()
+        self.__parser = Parser(self.__token)
+
         self.__daftarKondisi = self.__wordList.getDaftarKondisi()
-        self.__isKalimatPerintah = self.__processing.isPerintah(token)
-        self.__daftarTabelTeridentifikasi = self.__processing.identifikasiTabel(
-            token)
-        self.__daftarKolom = self.__processing.identifikasiKolomByTabel(token)
-        self.__kolomKondisiTeridentifikasi, self.__atributKondisiTeridentifikasi = self.__processing.identifikasiKolomKondisi(
-            self.__token)
-        self.__OperatorLogikaTeridentifikasi = self.__processing.identifikasiOperatorLogika(
-            self.__token)
+
+        self.__kalimatPerintah = self.__parser.getPerintahTeridentifikasi()
+        self.__daftarTabelTeridentifikasi = self.__parser.getTabelTeridentifikasi()
+        self.__daftarKolom = self.__parser.getKolomTeridentifikasiByTabel()
+        self.__kondisiTeridentifikasi = self.__parser.getKondisiTeridentifikasi()
+        self.__kolomKondisiTeridentifikasi = self.__parser.getKolomKondisiTeridentifikasi()
+        self.__atributKondisiTeridentifikasi = self.__parser.getAtributKondisiTeridentifikasi()
+        self.__OperatorLogikaTeridentifikasi = self.__parser.getOperatorLogikaTeridentifikasi()
+
         self.__sqlPartPerintah = []
         self.__sqlPartKolom = []
         self.__sqlPartTabel = []
@@ -23,10 +25,7 @@ class QueryForming:
         self.__sqlPartOperatorLogika = []
 
     def queryPartPerintah(self):
-        if self.__isKalimatPerintah:
-            self.__sqlPartPerintah.append("SELECT ")
-        else:
-            return("tidak ada kalimat perintah terindentifikasi")
+        self.__sqlPartPerintah.append("SELECT ")
 
     def queryPartKolom(self):
         indeksKoma = 1
@@ -57,7 +56,7 @@ class QueryForming:
                 self.__OperatorLogikaTeridentifikasi.pop(0))
 
     def queryPartKondisi(self):
-        if self.__processing.identifikasiKondisi(self.__token) is not None and len(self.__kolomKondisiTeridentifikasi) > 0 and len(self.__sqlPartOperatorLogika) == len(self.__kolomKondisiTeridentifikasi)-1:
+        if self.__kondisiTeridentifikasi is not None and len(self.__kolomKondisiTeridentifikasi) > 0 and len(self.__sqlPartOperatorLogika) == len(self.__kolomKondisiTeridentifikasi)-1:
             self.__sqlPartKondisi.append(f"WHERE ")
 
         for index, k in enumerate(self.__kolomKondisiTeridentifikasi):
@@ -67,11 +66,16 @@ class QueryForming:
                 self.__sqlPartKondisi.append(
                     self.__sqlPartOperatorLogika[index] + ' ')
 
-    def queryForming(self):
+    def run(self):
+
+        if self.__kalimatPerintah:
+            self.queryPartPerintah()
+        else:
+            return("tidak ada kalimat perintah terindentifikasi")
+
         if len(self.__daftarTabelTeridentifikasi) == 0:
             return("tidak ada tabel teridentifikasi")
 
-        self.queryPartPerintah()
         self.queryPartKolom()
         self.queryPartTabel()
         self.queryPartOperator()
@@ -82,7 +86,7 @@ class QueryForming:
             listToString(self.__sqlPartTabel) + \
             listToString(self.__sqlPartKondisi)
         return(result)
-        return(f"{self.__sqlPartKondisi}")
+        # return(self.__kalimatPerintah)
 
 
 def listToString(list):
