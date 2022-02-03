@@ -1,11 +1,11 @@
-from Controller.Processing import Processing
+from Controller.Parser import Parser
 from Controller.WordList import WordList, getDaftarKolomByTabel
 
 
 class QueryForming:
     def __init__(self, token):
         self.__wordList = WordList()
-        self.__processing = Processing()
+        self.__processing = Parser()
         self.__token = token
         self.__daftarKondisi = self.__wordList.getDaftarKondisi()
         self.__isKalimatPerintah = self.__processing.isPerintah(token)

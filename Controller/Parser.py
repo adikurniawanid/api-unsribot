@@ -1,12 +1,12 @@
 from Controller.WordList import WordList, getDaftarKolomByTabel
 
 
-class Processing:
+class Parser:
     def __init__(self):
-        wordlist = WordList()
-        self.__daftarPerintah = wordlist.getDaftarPerintah()
-        self.__daftarTabel = wordlist.getDaftarTable()
-        self.__daftarKondisi = wordlist.getDaftarKondisi()
+        __wordlist = WordList()
+        self.__daftarPerintah = __wordlist.getDaftarPerintah()
+        self.__daftarTabel = __wordlist.getDaftarTable()
+        self.__daftarKondisi = __wordlist.getDaftarKondisi()
         self.__daftarTabelTeridentifikasi = []
 
     def isPerintah(self, token):

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import reqparse, Api, Resource
 from Controller.Preprocessing import Preprocessing
-from Controller.Processing import Processing
+from Controller.Parser import Parser
 from Controller.QueryForming import QueryForming
 
 app = Flask(__name__)
@@ -17,7 +17,7 @@ class NaturalLanguage(Resource):
 
     def post(self):
         preprocessing = Preprocessing()
-        processing = Processing()
+        processing = Parser()
         kalimatPerintah = parser.parse_args()
         kalimatPerintah = preprocessing.pre(kalimatPerintah['nlParam'])
         queryForming = QueryForming(kalimatPerintah)
