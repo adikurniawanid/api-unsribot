@@ -1,4 +1,4 @@
 jenis kelamin:jenis_kelamin
 dosen pembimbing akademik:dosen_pembimbing_akademik
-dosen pa:dosen_pembimbing_akademik
 tahun angkatan:angkatan
+program studi:program_studi
