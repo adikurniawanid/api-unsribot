@@ -2,7 +2,7 @@ from Controller.Parser import Parser
 from Controller.WordList import WordList, getDaftarKolomByTabel
 
 
-class QueryForming:
+class Translator:
     def __init__(self, token):
         self.__token = token
         self.__wordList = WordList()
@@ -59,12 +59,13 @@ class QueryForming:
         if self.__kondisiTeridentifikasi is not None and len(self.__kolomKondisiTeridentifikasi) > 0 and len(self.__sqlPartOperatorLogika) == len(self.__kolomKondisiTeridentifikasi)-1:
             self.__sqlPartKondisi.append(f"WHERE ")
 
-        for index, k in enumerate(self.__kolomKondisiTeridentifikasi):
-            self.__sqlPartKondisi.append(
-                f"{k} LIKE '%{self.__atributKondisiTeridentifikasi[index]}%' ")
-            if len(self.__sqlPartOperatorLogika) > 0 and index < len(self.__sqlPartOperatorLogika):
+        if len(self.__daftarTabelTeridentifikasi) == 1:
+            for index, k in enumerate(self.__kolomKondisiTeridentifikasi):
                 self.__sqlPartKondisi.append(
-                    self.__sqlPartOperatorLogika[index] + ' ')
+                    f"{self.__daftarTabelTeridentifikasi[0]}.{k} LIKE '%{self.__atributKondisiTeridentifikasi[index]}%' ")
+                if len(self.__sqlPartOperatorLogika) > 0 and index < len(self.__sqlPartOperatorLogika):
+                    self.__sqlPartKondisi.append(
+                        self.__sqlPartOperatorLogika[index] + ' ')
 
     def run(self):
 
