@@ -13,6 +13,7 @@ except mysql.connector.Error as e:
 
 
 def querySQL(sql):
+    connection.reconnect()
     cursor = connection.cursor()
     cursor.execute(sql)
     records = cursor.fetchall()
