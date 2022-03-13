@@ -3,6 +3,8 @@ from flask_restful import reqparse, Api, Resource
 from Controller.Preprocessing import Preprocessing
 from Controller.Parser import Parser
 from Controller.Translator import Translator
+from Model.Connection import querySQL
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -21,6 +23,8 @@ class NaturalLanguage(Resource):
         __token = __preprocessing.run(__kalimatPerintah['nlParam'])
         __parser = Parser(__token)
         __translator = Translator(__token)
+        __query = __translator.run()
+        __queryResult = querySQL(__query)
 
         result = {
             'kalimat': __token,
@@ -31,7 +35,8 @@ class NaturalLanguage(Resource):
             'identifikasiKolomKondisi': __parser.getKolomKondisiTeridentifikasi(),
             'identifikasiAtributKondisi': __parser.getAtributKondisiTeridentifikasi(),
             'identifikasiOperator': __parser.getOperatorLogikaTeridentifikasi(),
-            'query': __translator.run()
+            'query': __query,
+            'queryResult': __queryResult
         }
         return result, 201
 
