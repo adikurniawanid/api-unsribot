@@ -13,8 +13,15 @@ except mysql.connector.Error as e:
 
 
 def querySQL(sql):
-    connection.reconnect()
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    records = cursor.fetchall()
-    return records
+    try:
+        connection.reconnect()
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        records = cursor.fetchall()
+        return records
+    except mysql.connector.Error as e:
+        print("Error reading data from MySQL table", e)
+    finally:
+        if connection.is_connected():
+            connection.close()
+            cursor.close()
