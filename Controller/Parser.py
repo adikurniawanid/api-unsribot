@@ -79,12 +79,12 @@ class Parser:
             if w in self.__daftarKondisi:
                 __operatorStatus = True
             if __operatorStatus == True:
-                if w == "atau" or w == "dan":
-                    self.__operatorLogikaTeridentifikasi.append(w)
-                # if w == "atau":
-                #     self.__operatorLogikaTeridentifikasi.append("or")
-                # elif w == "dan":
-                #     self.__operatorLogikaTeridentifikasi.append("and")
+                if w == "atau":
+                    self.__operatorLogikaTeridentifikasi.append("or")
+                elif w == "dan":
+                    self.__operatorLogikaTeridentifikasi.append("and")
+                # if w == "atau" or w == "dan":
+                #     self.__operatorLogikaTeridentifikasi.append(w)
 
     def getPerintahTeridentifikasi(self):
         return self.__perintahTeridentifikasi

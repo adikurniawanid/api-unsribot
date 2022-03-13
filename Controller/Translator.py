@@ -68,7 +68,6 @@ class Translator:
                         self.__sqlPartOperatorLogika[index] + ' ')
 
     def run(self):
-
         if self.__kalimatPerintah:
             self.queryPartPerintah()
         else:
@@ -87,7 +86,6 @@ class Translator:
             listToString(self.__sqlPartTabel) + \
             listToString(self.__sqlPartKondisi)
         return(result)
-        # return(self.__kalimatPerintah)
 
 
 def listToString(list):
